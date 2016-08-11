@@ -54,10 +54,9 @@ class OperationSpec extends Specification {
         ExecHarness.runSingle({ e ->
             println "start"
             calls.promiseVoid()
-                .operation({
-                    return calls.asyncErrorOp()
+                .flatMap({
+                    return calls.asyncErrorOp().promise()
                 })
-                .promise()
                 .result({ r ->
                     if (r.isError()) {
                         println ExceptionUtils.getStackTrace(r.getThrowable())
@@ -70,6 +69,34 @@ class OperationSpec extends Specification {
         then:
         noExceptionThrown()
     }
+
+    /**
+     * Green - But asyncErrorOp never runs
+     */
+    void 'it should handle an operation failure when using operation 2'() {
+        given:
+        Calls calls = new Calls()
+
+        when:
+        ExecHarness.runSingle({ e ->
+            println "start"
+            calls.promiseVoid()
+                    .operation({
+                        calls.asyncError()
+                    })
+                    .onError({ t ->
+                        println ExceptionUtils.getStackTrace(t)
+                        println 'total failure'
+                    })
+                    .then({
+                        println 'done'
+                    })
+        })
+
+        then:
+        noExceptionThrown()
+    }
+
 
 
     /**
