@@ -44,7 +44,7 @@ class OperationSpec extends Specification {
     }
 
     /**
-     * Fails - Exception not handled.
+     * Green - But asyncErrorOp never runs
      */
     void 'it should handle an operation failure when using operation'() {
         given:
@@ -84,9 +84,6 @@ class OperationSpec extends Specification {
         ExecHarness.runSingle({ e ->
             println "start"
             calls.promiseVoid()
-                .flatMap({
-                    return calls.promiseString()
-                })
                 .flatMap({
                     return Operation.of({
                         calls.asyncError()
