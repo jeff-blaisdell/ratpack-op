@@ -55,7 +55,7 @@ class OperationSpec extends Specification {
             println "start"
             calls.promiseVoid()
                 .operation({
-                    calls.asyncError()
+                    return calls.asyncErrorOp()
                 })
                 .promise()
                 .result({ r ->
@@ -70,6 +70,7 @@ class OperationSpec extends Specification {
         then:
         noExceptionThrown()
     }
+
 
     /**
      * Passes - Works as expected.
@@ -105,6 +106,12 @@ class OperationSpec extends Specification {
     }
 
     class Calls {
+
+        public Operation asyncErrorOp() {
+            return Blocking.get({
+                throw new RuntimeException("Async Error!")
+            }).operation()
+        }
 
         public void asyncError() {
             Blocking.get({
