@@ -82,8 +82,9 @@ class OperationSpec extends Specification {
             println "start"
             calls.promiseVoid()
                     .operation({
-                        calls.asyncError() // Throws error all the way up
+                        //calls.asyncError() // Throws error all the way up
                         //calls.asyncErrorOp() // Never gets invoked
+                        calls.error() // Works as expected.
                     })
                     .onError({ t ->
                         println ExceptionUtils.getStackTrace(t)
@@ -169,6 +170,10 @@ class OperationSpec extends Specification {
             }).then({
                 println "oops"
             })
+        }
+
+        public void error() {
+            throw new RuntimeException("Async Error!")
         }
 
         public void asyncIndefinite() {
