@@ -98,6 +98,31 @@ class OperationSpec extends Specification {
         noExceptionThrown()
     }
 
+    void 'it should handle an operation failure when using nextOp'() {
+        given:
+        Calls calls = new Calls()
+
+        when:
+        ExecHarness.runSingle({ e ->
+            println "start"
+            calls.promiseVoid()
+                .nextOp({
+                    //calls.asyncError() // Throws error all the way up
+                    calls.asyncErrorOp() // Never gets invoked
+                })
+                .result({ r ->
+                    if (r.isError()) {
+                        println ExceptionUtils.getStackTrace(r.getThrowable())
+                        println 'total failure'
+                    }
+                    println 'end'
+                })
+        })
+
+        then:
+        noExceptionThrown()
+    }
+
 
 
     /**
