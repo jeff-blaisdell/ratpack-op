@@ -82,7 +82,8 @@ class OperationSpec extends Specification {
             println "start"
             calls.promiseVoid()
                     .operation({
-                        calls.asyncError()
+                        calls.asyncError() // Throws error all the way up
+                        //calls.asyncErrorOp() // Never gets invoked
                     })
                     .onError({ t ->
                         println ExceptionUtils.getStackTrace(t)
